@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kerjakan Asesmen — MADANI</title>
+<style>
+:root{--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--text:#0f2a1d;--muted:#58705f;--accent:#12a05f;--red:#d12f26;--line:rgba(0,0,0,.1);--card:rgba(255,255,255,.9);--track:rgba(120,120,128,.16);--wall:linear-gradient(135deg,#9fe3bf 0%,#c4eed6 38%,#e6f4c8 70%,#f7e8b0 100%);--g:linear-gradient(160deg,#2fd283,#0b7a47)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--wall) fixed;line-height:1.5;min-height:100vh;padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:10px}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top));background:rgba(255,255,255,.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:.5px solid var(--line)}
+.tt{flex:1;min-width:0;line-height:1.25}.tt b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tt small{font-size:12px;color:var(--muted)}
+.tm{font:800 18px ui-monospace,Menlo,monospace;padding:6px 14px;border-radius:99px;background:var(--g);color:#fff}.tm.warn{background:linear-gradient(160deg,#ff7a8a,#e11d48);animation:bl 1s infinite}
+@keyframes bl{50%{opacity:.6}}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:16px;box-shadow:0 8px 28px rgba(20,60,40,.14),0 0 0 .5px var(--line);padding:18px}
+.lay{display:grid;grid-template-columns:1fr 270px;gap:16px;align-items:start}
+.idn{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 16px;margin-bottom:14px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.85);box-shadow:0 0 0 .5px var(--line)}.idn div{min-width:0}.idn small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.idn b{display:block;font-size:14px;overflow-wrap:anywhere}
+.ins{margin-bottom:14px;font-size:13px;color:var(--muted);background:rgba(255,255,255,.7);padding:10px 14px;border-radius:12px;box-shadow:0 0 0 .5px var(--line)}
+.qh{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.qn{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;color:#fff;background:var(--g)}
+.pill,.sc{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px}.pill{background:rgba(18,160,95,.14);color:#0b7a47}.sc{margin-left:auto;background:var(--track);color:var(--muted)}
+.qimg{margin:0 0 16px;text-align:center}
+.qimg img{display:block;margin:0 auto;max-width:100%;max-height:340px;height:auto;border-radius:12px;border:1px solid var(--line);background:#fff}
+.qimg.err::after{content:'Gambar tidak dapat dimuat.';font-size:12.5px;color:var(--muted)}
+.qmed{margin:0 0 16px}
+.qmed video{display:block;width:100%;max-height:380px;background:#000;border-radius:12px}
+.qmed audio{display:block;width:100%}
+.qmed .emb{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
+.qmed .emb iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.qmed .mfail{display:none;margin-top:8px;font-size:12.5px;color:var(--muted)}.qmed.err .mfail{display:block}.qmed .mfail a{color:var(--accent);font-weight:700}
+.qt{font-size:16.5px;line-height:1.55;white-space:pre-wrap;margin-bottom:16px}
+.op{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;margin-bottom:8px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line);transition:.15s}
+.op b{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:13px;background:var(--track)}
+.op:hover{box-shadow:inset 0 0 0 1.5px var(--accent)}.op.on{background:rgba(18,160,95,.12);box-shadow:inset 0 0 0 2px var(--accent)}.op.on b{background:var(--accent);color:#fff}
+.bs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.bs .op{justify-content:center;font-weight:800;font-size:16px;padding:18px 10px;margin:0}
+.cells{display:flex;flex-wrap:wrap;gap:6px}
+.cell{width:42px;height:48px;text-align:center;font:800 20px ui-monospace,Menlo,monospace;text-transform:uppercase;border-radius:10px;border:0;background:#fff;box-shadow:inset 0 0 0 2px var(--accent);color:#0b7a47}
+.cell:focus{outline:none;background:rgba(18,160,95,.12);box-shadow:inset 0 0 0 3px var(--accent)}
+.hint{font-size:12.5px;color:var(--muted);margin-top:10px}
+textarea{width:100%;min-height:200px;font:inherit;padding:12px;border-radius:12px;border:1px solid var(--line);resize:vertical;background:#fff}
+textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(18,160,95,.2)}
+.nav h3{font-size:14px;margin-bottom:10px}.ng{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.nb{aspect-ratio:1;border-radius:9px;font-weight:700;font-size:13px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)}
+.nb.done{background:var(--accent);color:#fff;box-shadow:none}.nb.flag{background:#ff9f0a;color:#fff;box-shadow:none}.nb.cur{outline:3px solid #0f2a1d;outline-offset:1px}
+.lg{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px;color:var(--muted);margin:12px 0}.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+.prog{font-size:13px;color:var(--muted);margin-bottom:10px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:25;display:flex;gap:10px;justify-content:center;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:.5px solid var(--line)}
+.bt{display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;padding:11px 20px;border-radius:12px;background:var(--track)}
+.bt.pri{color:#fff;background:var(--g);box-shadow:0 4px 12px rgba(11,122,71,.35)}.bt.on{background:#ff9f0a;color:#fff}.bt[disabled]{opacity:.5;pointer-events:none}.bt.full{width:100%}
+.st{text-align:center;padding:40px 16px}.st h2{margin-bottom:6px}.st p{color:var(--muted)}.st .bt{margin-top:16px}
+.big{font-size:56px;font-weight:800;color:#0b7a47;line-height:1.1;margin:10px 0}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:60;max-width:92vw;padding:10px 18px;border-radius:14px;font-size:13.5px;font-weight:600;color:#fff;background:#1d1d1fe6;opacity:0;pointer-events:none;transition:opacity .25s}.toast.show{opacity:1}
+@media (max-width:820px){.lay{grid-template-columns:1fr}.wrap{padding:10px 8px}.ng{grid-template-columns:repeat(8,1fr)}.cell{width:36px;height:44px}}
+/* Popup peringatan sisa waktu 1 menit */
+.wm{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,42,29,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.wm.show{display:flex;animation:wmf .2s ease-out}
+.wb{width:100%;max-width:380px;text-align:center;padding:26px 22px 20px;border-radius:22px;background:#fff;box-shadow:0 24px 60px rgba(20,60,40,.35),0 0 0 .5px var(--line);animation:wmp .35s cubic-bezier(.2,1.3,.4,1)}
+.wr{position:relative;width:112px;height:112px;margin:0 auto 14px}
+.wr svg{width:100%;height:100%;transform:rotate(-90deg)}
+.wr circle{fill:none;stroke-width:8}
+.wr .t{stroke:var(--track)}
+.wr .p{stroke:var(--red);stroke-linecap:round;stroke-dasharray:301.6;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear}
+.wr b{position:absolute;inset:0;display:grid;place-items:center;font:800 34px ui-monospace,Menlo,monospace;color:var(--red)}
+.wb h2{font-size:19px;line-height:1.3;margin-bottom:6px}
+.wb p{font-size:14px;color:var(--muted)}
+.wb .bt{margin-top:18px}
+@keyframes wmf{from{opacity:0}}
+@keyframes wmp{from{opacity:0;transform:scale(.86) translateY(10px)}}
+@media (prefers-reduced-motion:reduce){.wm.show,.wb{animation:none}.wr .p{transition:none}}
+</style>
+</head>
+<body>
+<header class="top"><div class="tt"><b id="hT">Asesmen</b><small id="hS"></small></div><div class="tm" id="tm" hidden>--:--</div></header>
+<main class="wrap" id="app"><div class="card st"><p>Memuat…</p></div></main>
+<div class="wm" id="wm" role="alertdialog" aria-modal="true" aria-labelledby="wmT" aria-describedby="wmD"><div class="wb">
+<div class="wr"><svg viewBox="0 0 112 112" aria-hidden="true"><circle class="t" cx="56" cy="56" r="48"/><circle class="p" id="wmP" cx="56" cy="56" r="48"/></svg><b id="wmN">60</b></div>
+<h2 id="wmT">Waktu Anda tinggal 1 Menit Lagi</h2>
+<p id="wmD">Pastikan Anda menyelesaikan Tes sebelum waktu berakhir. Jawaban dikirim otomatis saat waktu habis.</p>
+<button class="bt pri full" id="wmB" type="button">Lanjut Mengerjakan</button></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+(function(){
+const SHOW_NILAI=true; /* false = sembunyikan nilai dari siswa setelah selesai */
+const $=i=>document.getElementById(i);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=k=>String(k||'').toLowerCase().replace(/[\s\-_.]/g,'');
+const letters=s=>String(s||'').toUpperCase().replace(/[^A-Z]/g,'');
+const app=$('app');
+let tt;function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3500);}
+function msg(t,m,btn,href){app.innerHTML='<div class="card st"><h2>'+esc(t)+'</h2><p>'+esc(m)+'</p>'+(btn?'<a class="bt pri" href="'+href+'">'+esc(btn)+'</a>':'')+'</div>';}
+
+const db=window.db; /* klien dari config.js */
+const BACK='asesmen.html';
+const DESK={pg:'Pilihlah satu jawaban yang paling benar (A, B, C, atau D). Bacalah setiap pertanyaan dengan teliti.',bs:'Tentukan apakah setiap pernyataan Benar atau Salah.',essay:'Jawablah setiap pertanyaan dengan uraian yang jelas dan menggunakan bahasa sendiri.',tts:'Isilah kotak jawaban sesuai petunjuk mendatar dan menurun. Satu kotak diisi satu huruf.'};
+
+let sess=null,ses=null;
+try{sess=JSON.parse(sessionStorage.getItem('madani_session')||'null');ses=JSON.parse(sessionStorage.getItem('madani_asesmen')||'null');}catch(_){}
+const pid=+new URLSearchParams(location.search).get('paket');
+const KAT={UH:'Ulangan Harian',UTS:'UTS',UAS:'UAS'};
+const katLabel=p=>{const ke=+p.ke||1;return (KAT[p.kategori]||p.kategori||'')+(ke>1?' '+ke:'');};
+let ID={nama:'',nisn:'',kelas:'',kategori:''};
+let P,A,Q=[],st,KEY,deadline,timer,busy=false,finished=false,warned=false,wmPrev=null,wmTo=null,timeUp=false;
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(_){}}
+const answered=i=>{const a=st.ans[i];return a!==undefined&&a!==null&&(typeof a!=='string'||a.trim()!=='');};
+
+async function init(){
+  try{
+    if(!sess||sess.role!=='siswa'||!sess.id)return msg('Belum login sebagai siswa','Silakan masuk lewat Ruang Siswa.','Ke halaman login','index.html');
+    if(!pid||!ses||+ses.paket_id!==pid)return msg('Token belum dimasukkan','Mulai asesmen dari halaman Asesmen dan masukkan token dari gurumu.','Ke halaman Asesmen',BACK);
+    const ra=await db.from('soal_aktif').select('id,paket_id,aktif,durasi_menit,mulai,selesai').eq('id',ses.soal_aktif_id).maybeSingle();
+    if(ra.error)throw ra.error;A=ra.data;
+    const now=Date.now();
+    if(!A||A.paket_id!==pid||!A.aktif)return msg('Asesmen tidak aktif','Asesmen ini sudah dinonaktifkan oleh guru.','Kembali',BACK);
+    if(now<new Date(A.mulai).getTime())return msg('Belum dimulai','Asesmen ini belum dibuka.','Kembali',BACK);
+    const rp=await db.from('paket_soal').select('*').eq('id',pid).maybeSingle();
+    if(rp.error)throw rp.error;P=rp.data;if(!P)return msg('Soal tidak ditemukan','Paket soal tidak tersedia.','Kembali',BACK);
+    let kelas=sess.kelas||'',nama=sess.nama||'',nisn=sess.nisn||'';
+    if(!kelas||!nama||!nisn){
+      const s=await db.from('siswa').select('*').eq('id',sess.id).maybeSingle();
+      const d=s.data||{};
+      kelas=kelas||d.rombel||d.kelas||'';
+      nama=nama||d.nama||d.nama_siswa||'';
+      nisn=nisn||d.nisn||'';
+    }
+    ID={nama:nama,nisn:String(nisn||''),kelas:kelas||P.kelas,kategori:katLabel(P)};
+    if(norm(kelas)!==norm(P.kelas))return msg('Bukan untuk kelasmu','Asesmen ini diperuntukkan bagi kelas '+P.kelas+'.','Kembali',BACK);
+    const rh=await db.from('hasil_asesmen').select('nilai,skor_otomatis,skor_maks,perlu_koreksi').eq('soal_aktif_id',A.id).eq('siswa_id',String(sess.id)).maybeSingle();
+    if(rh.data)return done(rh.data,true);
+    if(now>new Date(A.selesai).getTime())return msg('Waktu habis','Asesmen ini sudah berakhir.','Kembali',BACK);
+    const rb=await db.from('butir_soal').select('nomor,tipe,teks,gambar,skor,opsi,jawaban,arah').eq('paket_id',pid).order('nomor',{ascending:true}).range(0,999);
+    if(rb.error)throw rb.error;Q=rb.data||[];
+    if(!Q.length)return msg('Belum ada soal','Paket ini belum memiliki butir soal. Hubungi gurumu.','Kembali',BACK);
+
+    KEY='madani_kerja_'+A.id+'_'+sess.id;
+    try{st=JSON.parse(localStorage.getItem(KEY)||'null');}catch(_){}
+    if(!st)st={mulai:now,ans:{},flag:{},cur:0,viol:0};
+    deadline=Math.min(st.mulai+A.durasi_menit*60000,new Date(A.selesai).getTime());
+    save();start();
+  }catch(e){
+    const m=(e&&e.message)||String(e);
+    msg('Gagal memuat soal',/permission denied/i.test(m)?'Akses data ditolak. Hubungi guru.':m,'Kembali',BACK);
+  }
+}
+
+function start(){
+  $('hT').textContent=P.judul;$('hS').textContent=P.kelas+(P.materi?' · '+P.materi:'');
+  $('tm').hidden=false;
+  app.innerHTML='<div class="idn"><div><small>Nama Siswa</small><b>'+esc(ID.nama||'-')+'</b></div><div><small>NISN</small><b>'+esc(ID.nisn||'-')+'</b></div><div><small>Kelas</small><b>'+esc(ID.kelas||'-')+'</b></div><div><small>Kategori Ulangan</small><b>'+esc(ID.kategori||'-')+'</b></div></div><div class="ins">'+esc(P.deskripsi||DESK[P.bentuk]||'')+'</div>'+
+    '<div class="lay"><section class="card" id="qc"></section><aside class="card nav"><h3>Daftar Soal</h3><div class="prog" id="pg"></div><div class="ng" id="ng"></div>'+
+    '<div class="lg"><span><i style="background:var(--accent)"></i>Terjawab</span><span><i style="background:#ff9f0a"></i>Ragu</span><span><i style="background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)"></i>Kosong</span></div>'+
+    '<button class="bt pri full" id="bS" type="button">Kirim Jawaban</button></aside></div>'+
+    '<div class="bar"><button class="bt" id="bP" type="button">‹ Sebelumnya</button><button class="bt" id="bF" type="button">Ragu-ragu</button><button class="bt pri" id="bN" type="button">Berikutnya ›</button></div>';
+  $('bP').onclick=()=>go(st.cur-1);
+  $('bN').onclick=()=>st.cur===Q.length-1?ask():go(st.cur+1);
+  $('bF').onclick=()=>{st.flag[st.cur]=!st.flag[st.cur];save();upd();};
+  $('bS').onclick=ask;$('wmB').onclick=hideWarn;document.addEventListener('keydown',e=>{if(e.key==='Escape')hideWarn();});
+  $('ng').onclick=e=>{const b=e.target.closest('.nb');if(b)go(+b.dataset.i);};
+  $('qc').addEventListener('click',onClick);$('qc').addEventListener('input',onInput);
+  $('qc').addEventListener('keydown',onKey);$('qc').addEventListener('paste',onPaste);
+  tick();timer=setInterval(tick,1000);render();
+  window.addEventListener('beforeunload',e=>{if(!finished){e.preventDefault();e.returnValue='';}});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&!finished){st.viol++;save();toast('Kamu meninggalkan halaman ujian. Hal ini dicatat.');}});
+}
+
+function go(i){if(i<0||i>=Q.length)return;st.cur=i;save();render();window.scrollTo({top:0,behavior:'smooth'});}
+/* ---- Lampiran soal: gambar / suara / video (disimpan di kolom "gambar") ---- */
+function kindOf(u){
+  u=String(u||'');
+  const h=(u.split('#')[1]||'').toLowerCase();
+  if(h==='suara'||h==='video')return h;
+  const base=u.split('#')[0].split('?')[0].toLowerCase();
+  if(/\.(mp3|wav|ogg|oga|m4a|aac|flac|opus)$/.test(base))return 'suara';
+  if(/\.(mp4|webm|mov|m4v|mkv|ogv)$/.test(base)||/^https?:\/\/([a-z0-9-]+\.)*(youtube\.com|youtu\.be|vimeo\.com)\//.test(base))return 'video';
+  return 'image';
+}
+function cleanLink(u){return String(u||'').replace(/#(suara|video)$/i,'');}
+function safeLink(u){return /^https?:\/\/\S+$/i.test(String(u||'').trim());}
+function embedUrl(u){
+  let m;
+  if((m=u.match(/^https?:\/\/(?:www\.|m\.)?youtube\.com\/watch\?(?:[^#]*&)?v=([\w-]{6,})/i))||(m=u.match(/^https?:\/\/youtu\.be\/([\w-]{6,})/i))||(m=u.match(/^https?:\/\/(?:www\.|m\.)?youtube\.com\/(?:embed|shorts|live)\/([\w-]{6,})/i)))
+    return 'https://www.youtube-nocookie.com/embed/'+m[1]+'?rel=0&playsinline=1';
+  if((m=u.match(/^https?:\/\/(?:www\.)?vimeo\.com\/(?:video\/)?(\d+)/i))||(m=u.match(/^https?:\/\/player\.vimeo\.com\/video\/(\d+)/i)))
+    return 'https://player.vimeo.com/video/'+m[1];
+  if((m=u.match(/^https?:\/\/drive\.google\.com\/file\/d\/([\w-]+)/i))||(m=u.match(/^https?:\/\/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([\w-]+)/i)))
+    return 'https://drive.google.com/file/d/'+m[1]+'/preview';
+  return '';
+}
+function mediaHtml(src,i){
+  const k=kindOf(src);
+  if(k==='image')return '<figure class="qimg"><img src="'+esc(src)+'" alt="Gambar soal nomor '+(i+1)+'" decoding="async" onerror="this.parentNode.classList.add(\'err\');this.remove()"></figure>';
+  const u=cleanLink(src);
+  if(!safeLink(u))return '';
+  const fb='<p class="mfail">Media tidak dapat diputar di sini. <a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Buka di tab baru</a></p>';
+  const er='onerror="this.parentNode.classList.add(\'err\')"';
+  if(k==='suara')return '<div class="qmed"><audio controls preload="metadata" controlsList="nodownload" '+er+' src="'+esc(u)+'" aria-label="Audio soal nomor '+(i+1)+'">Browser tidak mendukung audio.</audio>'+fb+'</div>';
+  const e=embedUrl(u);
+  if(e)return '<div class="qmed"><div class="emb"><iframe src="'+esc(e)+'" title="Video soal nomor '+(i+1)+'" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>'+fb.replace('Media tidak dapat diputar di sini.','Video tidak tampil?')+'</div>';
+  return '<div class="qmed"><video controls playsinline preload="metadata" controlsList="nodownload" '+er+' src="'+esc(u)+'" aria-label="Video soal nomor '+(i+1)+'">Browser tidak mendukung video.</video>'+fb+'</div>';
+}
+function lbl(q){return q.tipe==='pg'?'Pilihan Ganda':q.tipe==='bs'?'Benar / Salah':q.tipe==='tts'?(q.arah==='menurun'?'Menurun':'Mendatar'):'Uraian';}
+function render(){
+  const i=st.cur,q=Q[i],a=st.ans[i];
+  let h='<div class="qh"><span class="qn">'+(i+1)+'</span><span class="pill">'+lbl(q)+'</span><span class="sc">'+q.skor+' poin</span></div><p class="qt">'+esc(q.teks)+'</p>'+(q.gambar?mediaHtml(q.gambar,i):'');
+  if(q.tipe==='pg')h+=(q.opsi||[]).map((o,j)=>'<button type="button" class="op'+(a===j?' on':'')+'" data-v="'+j+'"><b>'+'ABCD'.charAt(j)+'</b><span>'+esc(o)+'</span></button>').join('');
+  else if(q.tipe==='bs')h+='<div class="bs"><button type="button" class="op'+(a===true?' on':'')+'" data-v="1">Benar</button><button type="button" class="op'+(a===false?' on':'')+'" data-v="0">Salah</button></div>';
+  else if(q.tipe==='tts'){
+    const n=letters(q.jawaban).length,v=String(a||'').padEnd(n,' ');
+    h+='<div class="cells">';for(let k=0;k<n;k++)h+='<input class="cell" data-k="'+k+'" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Huruf '+(k+1)+'" value="'+esc(v.charAt(k).trim())+'">';
+    h+='</div><p class="hint">'+n+' huruf · '+(q.arah==='menurun'?'menurun':'mendatar')+'</p>';
+  }else h+='<textarea maxlength="5000" placeholder="Tulis jawabanmu di sini…" aria-label="Jawaban">'+esc(a||'')+'</textarea><p class="hint" id="cc">'+String(a||'').length+' karakter</p>';
+  $('qc').innerHTML=h;upd();
+  const nx=Q[i+1];if(nx&&nx.gambar&&kindOf(nx.gambar)==='image'){const im=new Image();im.src=nx.gambar;}
+}
+function upd(){
+  const n=Q.length,d=Q.filter((_,i)=>answered(i)).length;
+  $('pg').textContent=d+' dari '+n+' soal terjawab';
+  $('ng').innerHTML=Q.map((_,i)=>'<button type="button" class="nb'+(answered(i)?' done':'')+(st.flag[i]?' flag':'')+(i===st.cur?' cur':'')+'" data-i="'+i+'" aria-label="Soal '+(i+1)+'">'+(i+1)+'</button>').join('');
+  $('bP').disabled=st.cur===0;$('bF').classList.toggle('on',!!st.flag[st.cur]);
+  $('bN').textContent=st.cur===n-1?'Selesai ✓':'Berikutnya ›';
+}
+function onClick(e){
+  const b=e.target.closest('.op');if(!b)return;
+  const q=Q[st.cur],v=b.dataset.v,val=q.tipe==='bs'?v==='1':+v;
+  if(st.ans[st.cur]===val)delete st.ans[st.cur];else st.ans[st.cur]=val;
+  save();render();
+}
+function cells(){return Array.from($('qc').querySelectorAll('.cell'));}
+function setTts(){st.ans[st.cur]=cells().map(c=>c.value||' ').join('');if(!st.ans[st.cur].trim())delete st.ans[st.cur];save();upd();}
+function onInput(e){
+  const c=e.target;
+  if(c.classList.contains('cell')){
+    c.value=letters(c.value).slice(-1);setTts();
+    if(c.value&&c.nextElementSibling)c.nextElementSibling.focus();
+  }else if(c.tagName==='TEXTAREA'){
+    if(c.value.trim())st.ans[st.cur]=c.value;else delete st.ans[st.cur];
+    $('cc').textContent=c.value.length+' karakter';save();upd();
+  }
+}
+function onKey(e){
+  const c=e.target;if(!c.classList.contains('cell'))return;
+  if(e.key==='Backspace'&&!c.value&&c.previousElementSibling){c.previousElementSibling.focus();}
+  else if(e.key==='ArrowLeft'&&c.previousElementSibling)c.previousElementSibling.focus();
+  else if(e.key==='ArrowRight'&&c.nextElementSibling)c.nextElementSibling.focus();
+}
+function onPaste(e){
+  const c=e.target;if(!c.classList.contains('cell'))return;
+  e.preventDefault();
+  const t=letters((e.clipboardData||window.clipboardData).getData('text')),cs=cells();
+  for(let k=+c.dataset.k,j=0;k<cs.length&&j<t.length;k++,j++)cs[k].value=t[j];
+  setTts();
+}
+
+function showWarn(){
+  if(warned)return;warned=true;
+  wmPrev=document.activeElement;
+  $('wm').classList.add('show');
+  $('wmB').focus({preventScroll:true});
+  wmTo=setTimeout(hideWarn,10000);
+}
+function hideWarn(){
+  clearTimeout(wmTo);
+  const w=$('wm');if(!w.classList.contains('show'))return;
+  w.classList.remove('show');
+  if(wmPrev&&wmPrev.focus&&document.contains(wmPrev)){try{wmPrev.focus({preventScroll:true});}catch(_){}}
+  wmPrev=null;
+}
+function tick(){
+  if(busy||finished)return;
+  const r=deadline-Date.now(),el=$('tm');
+  if(r<=0){el.textContent='00:00';clearInterval(timer);hideWarn();timeUp=true;toast('Waktu habis. Jawaban dikirim otomatis.');submit();return;}
+  const s=Math.floor(r/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60,p=v=>String(v).padStart(2,'0');
+  el.textContent=(h?h+':':'')+p(m)+':'+p(x);el.classList.toggle('warn',r<=300000);
+  if(r<=60000){showWarn();$('wmN').textContent=Math.ceil(r/1000);$('wmP').style.strokeDashoffset=(301.6*(1-r/60000)).toFixed(1);}
+}
+function ask(){
+  const k=Q.filter((_,i)=>!answered(i)).length,f=Object.keys(st.flag).filter(i=>st.flag[i]).length;
+  let t='Kirim jawaban sekarang?';
+  if(k)t='Masih ada '+k+' soal yang belum dijawab.\n'+t;
+  if(f)t+='\n('+f+' soal masih ditandai ragu-ragu)';
+  if(confirm(t+'\nSetelah dikirim, jawaban tidak dapat diubah.'))submit();
+}
+
+/* ---------- Simpan nilai ke tabel nilai_kelas_<kelas> ---------- */
+function tblCands(kelas){
+  const k=String(kelas||'').trim(),snake=k.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+  const c=[];[snake,snake.replace(/_/g,''),k.toLowerCase(),k.toLowerCase().replace(/\s+/g,'_'),k].forEach(v=>{v='nilai_kelas_'+v;if(c.indexOf(v)<0)c.push(v);});
+  return c;
+}
+const noTable=e=>e&&(e.code==='42P01'||e.code==='PGRST205'||/does not exist|schema cache|Could not find the table/i.test(e.message||''));
+async function simpanKeNilaiKelas(nilai){
+  const kat=String(P.kategori||'').toLowerCase().replace(/[^a-z]/g,''),ke=+P.ke||1;
+  /* UH ke-N -> ulangan_harian_N ; UTS -> uts ; UAS -> uas (nama dicocokkan tanpa garis bawah/spasi/huruf besar) */
+  const want=kat==='uh'?['ulanganharian'+ke]:ke===1?[kat]:[kat+ke,kat];
+  const sid=String(sess.id);
+  for(const t of tblCands(ID.kelas)){
+    const r=await db.from(t).select('*').eq('siswa_id',sid).maybeSingle();
+    if(r.error){if(noTable(r.error))continue;throw r.error;}
+    if(!r.data)return {ok:false,msg:'Kamu belum terdaftar di tabel '+t+'.'};
+    const keys=Object.keys(r.data);
+    const col=want.map(w=>keys.find(k=>norm(k)===w)).find(Boolean);
+    if(!col)return {ok:false,msg:'Kolom '+(kat==='uh'?'ulangan_harian_'+ke:kat)+' tidak ada di tabel '+t+'.'};
+    const u=await db.from(t).update({[col]:nilai}).eq('siswa_id',sid).select('siswa_id');
+    if(u.error)throw u.error;
+    if(!u.data||!u.data.length)return {ok:false,msg:'Penyimpanan ke '+t+' ditolak (cek policy update di Supabase).'};
+    return {ok:true,tabel:t,kolom:col};
+  }
+  return {ok:false,msg:'Tabel nilai untuk kelas '+ID.kelas+' tidak ditemukan.'};
+}
+
+async function submit(){
+  if(busy||finished)return;busy=true;clearInterval(timer);hideWarn();
+  app.innerHTML='<div class="card st"><h2>'+(timeUp?'Waktu habis':'Mengirim jawaban…')+'</h2><p>'+(timeUp?'Jawaban yang sudah kamu isi sedang dikirim. Jangan tutup halaman ini.':'Jangan tutup halaman ini.')+'</p></div>';
+  $('tm').hidden=true;document.querySelector('.bar')&&document.querySelector('.bar').remove();
+  let skor=null,maks=0,essay=false,benar=0;
+  try{
+    const rk=await db.from('butir_soal').select('nomor,tipe,skor,kunci_pg,kunci_bs,jawaban').eq('paket_id',pid).range(0,999);
+    if(rk.error)throw rk.error;
+    const K={};rk.data.forEach(r=>K[r.nomor]=r);skor=0;
+    Q.forEach((q,i)=>{
+      const k=K[q.nomor]||{},a=st.ans[i];
+      if(q.tipe==='essay'){essay=true;return;}
+      maks+=+q.skor||0;
+      const ok=q.tipe==='pg'?a===k.kunci_pg:q.tipe==='bs'?a===k.kunci_bs:(letters(a).length>0&&letters(a)===letters(k.jawaban));
+      if(ok){skor+=+q.skor||0;benar++;}
+    });
+  }catch(_){skor=null;essay=true;}
+  const nilai=skor!==null&&maks>0?Math.round(skor/maks*1000)/10:null;
+  const rec={soal_aktif_id:A.id,paket_id:pid,siswa_id:String(sess.id),nama:ID.nama||null,nisn:ID.nisn||null,kelas:ID.kelas||P.kelas,kategori:ID.kategori||null,
+    jawaban:Q.map((q,i)=>({nomor:q.nomor,tipe:q.tipe,jawab:st.ans[i]===undefined?null:st.ans[i]})),
+    skor_otomatis:skor,skor_maks:maks,nilai:nilai,perlu_koreksi:essay,pelanggaran:st.viol,
+    mulai:new Date(st.mulai).toISOString(),dikirim:new Date().toISOString()};
+  let saved=true,dup=false;
+  const r=await db.from('hasil_asesmen').insert(rec);
+  if(r.error){
+    if(r.error.code==='23505'){dup=true;}
+    else if(r.error.code==='42P01'||/does not exist|schema cache/i.test(r.error.message||'')){saved=false;}
+    else{busy=false;app.innerHTML='<div class="card st"><h2>Gagal mengirim</h2><p>'+esc(r.error.message)+'</p><button class="bt pri" id="rt" type="button">Coba kirim lagi</button></div>';$('rt').onclick=submit;return;}
+  }
+  let nl=null;
+  if(!dup&&nilai!==null){try{nl=await simpanKeNilaiKelas(nilai);}catch(e){nl={ok:false,msg:(e&&e.message)||String(e)};}}
+  finished=true;
+  if(saved){try{localStorage.removeItem(KEY);}catch(_){}try{sessionStorage.removeItem('madani_asesmen');}catch(_){}}
+  done({nilai:nilai,skor_otomatis:skor,skor_maks:maks,perlu_koreksi:essay},false,saved,nl);
+}
+function done(r,already,saved,nl){
+  finished=true;$('tm').hidden=true;const bar=document.querySelector('.bar');if(bar)bar.remove();
+  let h='<div class="card st"><h2>'+(already?'Kamu sudah mengerjakan asesmen ini':'Jawaban terkirim ✓')+'</h2>';
+  if(SHOW_NILAI&&r.nilai!=null){
+    h+='<div class="big">'+r.nilai+'</div><p>Skor '+r.skor_otomatis+' dari '+r.skor_maks+(P&&P.kkm!=null?' · KKM '+P.kkm:'')+'</p>';
+    if(r.perlu_koreksi)h+='<p style="margin-top:6px">Nilai sementara. Soal uraian akan dinilai oleh gurumu.</p>';
+  }else if(r.perlu_koreksi)h+='<p>Soal uraian akan dinilai oleh gurumu.</p>';
+  else h+='<p>Terima kasih. Hasilmu akan disampaikan oleh gurumu.</p>';
+  if(saved===false)h+='<p style="color:var(--red);margin-top:10px">Tabel hasil_asesmen (atau kolom nisn/kategori) belum ada di Supabase, jadi jawaban belum tersimpan di server. Jangan hapus data browser dan hubungi gurumu.</p>';
+  if(nl&&!nl.ok)h+='<p style="color:var(--red);margin-top:10px">Jawabanmu sudah terkirim, tetapi nilai belum masuk ke tabel nilai kelas: '+esc(nl.msg)+' Hubungi gurumu.</p>';
+  app.innerHTML=h+'<a class="bt pri" href="'+BACK+'">Kembali ke Asesmen</a></div>';
+}
+init();
+})();
+</script>
+</body>
+</html>

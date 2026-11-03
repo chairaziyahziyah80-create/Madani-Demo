@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beranda Siswa — MADANI</title>
+<style>
+:root{
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --text:#0f2a1d;--muted:#58705f;--accent:#12a05f;--green:#28c840;--orange:#ff9f0a;--red:#ff453a;--purple:#af52de;
+  --glass:rgba(255,255,255,.72);--card:rgba(255,255,255,.88);--line:rgba(0,0,0,.1);--bar:rgba(255,255,255,.6);--track:rgba(120,120,128,.16);
+  --wall:linear-gradient(135deg,#9fe3bf 0%,#c4eed6 38%,#e6f4c8 70%,#f7e8b0 100%);
+  --shadow:0 14px 40px rgba(30,30,80,.2),0 0 0 .5px rgba(0,0,0,.14);
+  color-scheme:light;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--text);background:var(--wall) fixed;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:calc(120px + env(safe-area-inset-bottom))}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:10px}
+
+/* Navbar */
+.nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:8px 20px;padding-top:calc(8px + env(safe-area-inset-top));
+  background:var(--bar);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.01em;min-width:0}
+.sch-logo{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:#fff;overflow:hidden;
+  background:#04150d;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 2px 6px rgba(0,0,0,.22)}
+.sch-logo svg{width:20px;height:20px}
+.sch-logo img{width:100%;height:100%;object-fit:contain}
+.sch-logo[hidden]{display:none}
+.sch-name{display:block;min-width:0;line-height:1.2}
+.sch-name b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sch-name small{display:block;font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:520px){.sch-name small{display:none}.sch-name b{font-size:13px}}
+.sp{flex:1}
+.acct{display:flex;align-items:center;gap:10px;padding:4px 6px 4px 12px;border-radius:99px;background:var(--track)}
+.acct div{text-align:right;line-height:1.2}
+.acct b{display:block;font-size:13px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.acct small{font-size:11px;color:var(--muted)}
+.avatar{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;background:linear-gradient(160deg,#2fd283,#0b7a47);overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+
+/* Layout */
+.wrap{max-width:none;margin:0;padding:22px min(150px,12vw)}
+.head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:10px;margin-bottom:18px}
+h1{font-size:clamp(26px,4.5vw,36px);letter-spacing:-.025em;line-height:1.1}
+.head p{color:var(--muted);font-size:14px;margin-top:4px}
+.chip{font-size:13px;font-weight:600;padding:6px 14px;border-radius:99px;background:var(--glass);box-shadow:0 0 0 .5px var(--line)}
+.panel{background:var(--glass);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:16px;box-shadow:var(--shadow)}
+
+.box{padding:20px}
+.box h2{font-size:18px;letter-spacing:-.01em}
+.box .sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-bottom:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* Sticky footer dock — gaya dock layar utama ponsel (melayang, kaca buram, ikon squircle) */
+.dock{position:fixed!important;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;padding:0 14px calc(12px + env(safe-area-inset-bottom));pointer-events:none;transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform}
+html,body{overflow-x:hidden}
+.dock nav{pointer-events:auto;display:flex;align-items:center;justify-content:center;gap:28px;padding:10px 22px;border-radius:34px;
+  background:rgba(255,255,255,.34);backdrop-filter:saturate(180%) blur(28px);-webkit-backdrop-filter:saturate(180%) blur(28px);
+  border:1px solid rgba(255,255,255,.55);box-shadow:0 10px 30px rgba(20,60,40,.22),inset 0 1px 0 rgba(255,255,255,.6)}
+.dock nav .d{display:grid;place-items:center;width:auto;padding:0;border-radius:15px;font-size:0;line-height:0;background:none;transition:transform .2s}
+.dock nav .d:hover{background:none;transform:translateY(-6px) scale(1.1)}
+.dock nav .d:active{transform:scale(.94)}
+.dock nav .d .ic{width:56px;height:56px;border-radius:15px;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.4)}
+.dock nav .d .ic svg{width:28px;height:28px}
+.dock nav .d{position:relative}
+/* Tooltip nama menu (teks putih, latar hitam) */
+.dock nav .d[data-tip]::after,.dock nav .d[data-tip]::before{position:absolute;left:50%;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .15s,transform .15s}
+.dock nav .d[data-tip]::after{content:attr(data-tip);bottom:calc(100% + 12px);transform:translate(-50%,4px);padding:6px 11px;border-radius:8px;background:#000;color:#fff;font-size:12px;font-weight:600;line-height:1.3;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.dock nav .d[data-tip]::before{content:"";bottom:calc(100% + 7px);transform:translate(-50%,4px);border-style:solid;border-width:5px 5px 0;border-color:#000 transparent transparent}
+.dock nav .d[data-tip]:focus-visible::after,.dock nav .d[data-tip]:focus-visible::before{opacity:1;visibility:visible;transform:translate(-50%,0)}
+@media (hover:hover){.dock nav .d[data-tip]:hover::after,.dock nav .d[data-tip]:hover::before{opacity:1;visibility:visible;transform:translate(-50%,0)}}
+@media (max-width:520px){.dock nav{gap:22px;padding:9px 18px;border-radius:30px}.dock nav .d .ic{width:50px;height:50px;border-radius:14px}.dock nav .d .ic svg{width:25px;height:25px}}
+.d{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;width:92px;padding:8px 6px;border-radius:16px;font-size:12px;font-weight:600;line-height:1.2;text-align:center;transition:background .15s,transform .15s}
+.d:hover{background:var(--track);transform:translateY(-3px)}
+.d .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.d .ic svg{width:21px;height:21px}
+
+
+@media (max-width:520px){.acct div{display:none}.acct{padding:3px}.d{width:62px;padding:6px 2px;font-size:10.5px}.d .ic{width:36px;height:36px}.wrap{padding:16px 5px}.nav{padding-left:5px;padding-right:5px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Bottom sheet (slide up) */
+.sheet-bd{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.35);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .28s ease,visibility 0s linear .34s}
+.sheet-bd.open{opacity:1;visibility:visible;transition:opacity .28s ease}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;width:min(720px,100%);margin:0 auto;border-radius:22px 22px 0 0;
+  background:rgba(255,255,255,.45);backdrop-filter:saturate(180%) blur(40px);-webkit-backdrop-filter:saturate(180%) blur(40px);
+  box-shadow:0 -10px 40px rgba(30,30,80,.25),0 0 0 .5px rgba(0,0,0,.14);padding:10px 20px calc(24px + env(safe-area-inset-bottom));
+  transform:translateY(105%);visibility:hidden;transition:transform .34s cubic-bezier(.2,.9,.3,1),visibility 0s linear .34s;max-height:85vh;overflow-y:auto}
+.sheet.open{transform:none;visibility:visible;transition:transform .34s cubic-bezier(.2,.9,.3,1)}
+.grab{width:40px;height:5px;border-radius:99px;background:rgba(120,120,128,.35);margin:0 auto 12px}
+.sheet-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sheet-h h2{font-size:20px;letter-spacing:-.01em}
+.sheet-x{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);color:var(--muted)}
+.sheet-x svg{width:16px;height:16px}
+.sheet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sheet-grid .d{width:auto;padding:14px 8px;background:var(--card);box-shadow:0 0 0 .5px var(--line);font-size:13px}
+.sheet-grid .d:hover{background:#E0F8C7}
+body.lock{overflow:hidden}
+@media (max-width:520px){.sheet-grid{grid-template-columns:repeat(2,1fr)}}
+@media (prefers-reduced-motion:reduce){.sheet,.sheet-bd{transition:none!important}}
+/* Dock: Menu + Logout, dengan nama tombol */
+.dock nav{align-items:flex-start;gap:28px;padding:10px 22px}
+.dock nav .d{display:flex;flex-direction:column;align-items:center;gap:5px;width:auto;min-width:64px;padding:4px 6px;font-size:11.5px;font-weight:600;line-height:1.2;color:var(--text)}
+.dock nav .d .ic{width:52px;height:52px}
+.dock nav .d .ic svg{width:26px;height:26px}
+.dock nav .d[data-tip]::after,.dock nav .d[data-tip]::before{display:none}
+@media (max-width:640px){
+  /* smartphone: jarak kiri-kanan halaman 5px */
+  .wrap{padding:16px 5px}
+  .nav{padding-left:5px;padding-right:5px}
+  .dock{padding-left:5px;padding-right:5px}
+  .dock nav{gap:22px;padding:8px 18px}
+  .box{padding:14px}
+  .sheet{padding-left:12px;padding-right:12px}
+}
+/* Identitas Siswa */
+.idh{display:flex;align-items:center;gap:16px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.idh .big{flex:none;width:64px;height:64px;border-radius:20px;display:grid;place-items:center;font-size:24px;font-weight:800;color:#fff;background:linear-gradient(160deg,#2fd283,#0b7a47);box-shadow:0 6px 16px rgba(11,122,71,.3),inset 0 1px 0 rgba(255,255,255,.4)}
+.idh .pf{flex:none;width:96px;height:128px;border-radius:16px;overflow:hidden;display:grid;place-items:center;background:var(--track);box-shadow:0 6px 16px rgba(11,122,71,.22),0 0 0 .5px var(--line)}
+.idh .pf img{width:100%;height:100%;object-fit:cover;display:block}
+.idh .pf .nophoto{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;text-align:center;font-size:11.5px;font-weight:600;line-height:1.3;color:var(--muted)}
+.idh .pf .nophoto svg{width:30px;height:30px;opacity:.7}
+.idh h2{font-size:20px;line-height:1.25;overflow-wrap:anywhere}
+.idh .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(18,160,95,.14);color:#0b7a47}
+.tag.g{background:var(--track);color:var(--muted)}
+.dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}
+.dl .it{padding:11px 0;border-bottom:1px solid var(--line);min-width:0}
+.dl dt{font-size:12px;font-weight:700;color:var(--muted)}
+.dl dd{font-size:15px;font-weight:600;margin-top:2px;overflow-wrap:anywhere}
+.dl dd.na{color:var(--muted);font-weight:500}
+.state{padding:34px 10px;text-align:center;color:var(--muted)}
+.state b{display:block;font-size:16px;color:var(--text);margin-bottom:4px}
+.state .btn{display:inline-flex;margin-top:14px;padding:10px 20px;border-radius:12px;font-weight:700;color:#fff;background:linear-gradient(160deg,#2fd283,#0b7a47);box-shadow:0 4px 12px rgba(11,122,71,.35)}
+/* Modal Upload Photo */
+.mbd{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:mfade .18s ease}
+.mbd[hidden]{display:none}
+.mdl{width:min(440px,100%);max-height:calc(100vh - 36px);max-height:calc(100dvh - 36px);display:flex;flex-direction:column;border-radius:20px;background:#f6fbf8;box-shadow:0 24px 70px rgba(0,0,0,.38),0 0 0 .5px rgba(0,0,0,.14);animation:mpop .22s cubic-bezier(.2,.9,.3,1);overflow:hidden}
+.mh{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px;border-bottom:.5px solid var(--line);background:rgba(255,255,255,.7)}
+.mh h2{font-size:19px;letter-spacing:-.01em}
+.mx{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);color:var(--muted)}
+.mx svg{width:16px;height:16px}
+.mb{flex:1 1 auto;min-height:0;overflow-y:auto;padding:18px 20px;text-align:center}
+.mb .sub{font-size:13px;color:var(--muted);margin-bottom:14px;text-align:left}
+.pvw{width:150px;height:200px;margin:0 auto 12px;border-radius:16px;overflow:hidden;display:grid;place-items:center;background:var(--track);box-shadow:inset 0 0 0 1px var(--line)}
+.pvw img{width:100%;height:100%;object-fit:cover;display:block}
+.pvw .nophoto{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;font-size:12px;font-weight:600;color:var(--muted)}
+.pvw .nophoto svg{width:34px;height:34px;opacity:.7}
+.fn{font-size:12.5px;color:var(--muted);margin-bottom:12px;overflow-wrap:anywhere}
+.mf{flex:none;display:flex;justify-content:flex-end;gap:10px;padding:12px 20px calc(12px + env(safe-area-inset-bottom));border-top:.5px solid var(--line);background:rgba(255,255,255,.85)}
+.bt{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:14px;padding:11px 18px;border-radius:12px;transition:transform .15s,opacity .15s}
+.bt.pri{color:#fff;background:linear-gradient(160deg,#2fd283,#0b7a47);box-shadow:0 4px 12px rgba(11,122,71,.35),inset 0 1px 0 rgba(255,255,255,.35)}
+.bt.sec{background:var(--track)}
+.bt[disabled]{opacity:.55;pointer-events:none}
+.toast{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));transform:translate(-50%,20px);z-index:60;max-width:min(92vw,420px);padding:11px 18px;border-radius:14px;font-size:13.5px;font-weight:600;color:#fff;background:#1d1d1fe6;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.ok{background:#0b7a47}.toast.err{background:#d12f26}
+@keyframes mfade{from{opacity:0}to{opacity:1}}
+@keyframes mpop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+@media (max-width:640px){.mbd{padding:0;align-items:flex-end}.mdl{width:100%;border-radius:20px 20px 0 0}.mh,.mb,.mf{padding-left:14px;padding-right:14px}.toast{bottom:calc(96px + env(safe-area-inset-bottom))}}
+@media (prefers-reduced-motion:reduce){.mbd,.mdl{animation:none}}
+.sk{height:14px;border-radius:7px;background:var(--track);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+@media (max-width:640px){.dl{grid-template-columns:1fr}.idh .pf{width:84px;height:112px;border-radius:14px}.idh h2{font-size:17px}.box{padding:16px}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="brand">
+    <span class="sch-logo" id="navLogoBox" aria-hidden="true" hidden><img id="navLogo" alt=""></span>
+    <span class="sch-name"><b id="navTitle">MADANI</b><small id="navSub">MGMP PAI Bangka Barat</small></span>
+  </div>
+  <span class="sp"></span>
+  <div class="acct" aria-label="Akun masuk">
+    <div><b id="acctName">Siswa</b><small id="acctRole">Siswa</small></div>
+    <span class="avatar" id="acctAv">S</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel box" id="idBox" aria-labelledby="idTitle">
+    <h2 id="idTitle" style="margin-bottom:2px">Identitas Siswa</h2>
+    <p class="sub">Data dirimu yang tercatat di sekolah.</p>
+    <div id="idBody">
+      <div class="sk" style="width:60%;margin:10px 0"></div><div class="sk" style="width:85%;margin:10px 0"></div><div class="sk" style="width:45%;margin:10px 0"></div>
+    </div>
+  </section>
+</main>
+
+<!-- Sticky footer -->
+<div class="dock">
+  <nav aria-label="Menu utama">
+    <button class="d" id="btnMenu" data-tip="Menu" aria-label="Menu" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="sheet"><span class="ic" style="background:linear-gradient(160deg,#2fd283,#0b7a47)" data-i="grid"></span>Menu</button>
+    <a class="d" id="btnLogout" data-tip="Logout" aria-label="Logout" href="index.html"><span class="ic" style="background:linear-gradient(160deg,#ff7a8a,#e11d48)" data-i="out"></span>Logout</a>
+  </nav>
+</div>
+
+<!-- Slide-up menu -->
+<div class="sheet-bd" id="sheetBd"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="grab" aria-hidden="true"></div>
+  <div class="sheet-h">
+    <h2 id="sheetTitle">Menu</h2>
+    <button class="sheet-x" id="sheetX" type="button" aria-label="Tutup menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="sheet-grid">
+    <button class="d" id="btnUpPhoto" type="button" aria-haspopup="dialog"><span class="ic" style="background:linear-gradient(160deg,#f472b6,#be185d)" data-i="photo"></span>Upload Photo</button>
+    <a class="d" href="mediasiswa.html"><span class="ic" style="background:linear-gradient(160deg,#c084fc,#7e22ce)" data-i="media"></span>Media Pembelajaran</a>
+    <a class="d" href="bukudigital.html"><span class="ic" style="background:linear-gradient(160deg,#2dd4bf,#0f766e)" data-i="book"></span>Buku Digital</a>
+    <a class="d" href="asesmen.html"><span class="ic" style="background:linear-gradient(160deg,#fb923c,#c2410c)" data-i="exam"></span>Asesmen</a>
+    <a class="d" href="absensiku.html"><span class="ic" style="background:linear-gradient(160deg,#60a5fa,#1d4ed8)" data-i="check"></span>Absensiku</a>
+    <a class="d" href="transkrip-siswa.html"><span class="ic" style="background:linear-gradient(160deg,#86d93f,#3f7d12)" data-i="grad"></span>Transkrip Nilai</a>
+  </div>
+</div>
+
+<!-- Modal Upload Photo -->
+<div class="mbd" id="upBd" hidden>
+  <div class="mdl" role="dialog" aria-modal="true" aria-labelledby="upTitle">
+    <div class="mh">
+      <h2 id="upTitle">Upload Photo</h2>
+      <button type="button" class="mx" id="upX" aria-label="Tutup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="mb">
+      <p class="sub">Pilih photo dirimu (JPG/PNG). Photo otomatis dikompres hingga maksimal 20 KB.</p>
+      <div class="pvw" id="upPv"></div>
+      <div class="fn" id="upFn">Belum ada file dipilih</div>
+      <button type="button" class="bt sec" id="upPick">Pilih Photo</button>
+    </div>
+    <div class="mf">
+      <button type="button" class="bt sec" id="upCancel">Batal</button>
+      <button type="button" class="bt pri" id="upSave" disabled>Unggah</button>
+    </div>
+  </div>
+</div>
+<input type="file" id="upFile" accept="image/*" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var P={
+    grid:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+    photo:'<path d="M4 8a2 2 0 012-2h2l1.5-2h5L16 6h2a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.5"/>',
+    media:'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/>',
+    book:'<path d="M4 5.5A2.5 2.5 0 016.5 3H20v15H6.5A2.5 2.5 0 004 20.5zM4 20.5A2.5 2.5 0 006.5 23H20v-5M9 8h6M9 12h4"/>',
+    doc:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5M9 13h6M9 17h6"/>',
+    exam:'<path d="M6 3h8l4 4v14H6zM14 3v4h4M9 14l2 2 4-4"/>',
+    check:'<rect x="4" y="4" width="16" height="17" rx="2"/><path d="M9 3v3M15 3v3M8.5 13l2.5 2.5 4.5-5"/>',
+    grad:'<path d="M2.5 9L12 4.5 21.5 9 12 13.5zM6 11.2V16c1.6 1.6 3.6 2.5 6 2.5s4.4-.9 6-2.5v-4.8M21.5 9v6"/>',
+    out:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>'
+  };
+  function svg(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+P[n]+'</svg>';}
+  document.querySelectorAll('[data-i]').forEach(function(e){e.innerHTML=svg(e.dataset.i);});
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function initials(n){return String(n||'').trim().split(/\s+/).slice(0,2).map(function(w){return w[0]}).join('').toUpperCase()||'S';}
+
+  /* ---------- Slide-up menu ---------- */
+  var sheet=$('sheet'),bd=$('sheetBd'),btnMenu=$('btnMenu');
+  function openSheet(){sheet.classList.add('open');bd.classList.add('open');document.body.classList.add('lock');btnMenu.setAttribute('aria-expanded','true');
+    var f=sheet.querySelector('a');if(f)f.focus({preventScroll:true});}
+  function closeSheet(){if(!sheet.classList.contains('open'))return;sheet.classList.remove('open');bd.classList.remove('open');document.body.classList.remove('lock');
+    btnMenu.setAttribute('aria-expanded','false');btnMenu.focus({preventScroll:true});}
+  btnMenu.addEventListener('click',function(){sheet.classList.contains('open')?closeSheet():openSheet();});
+  bd.addEventListener('click',closeSheet);
+  $('sheetX').addEventListener('click',closeSheet);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSheet();});
+
+  $('btnLogout').addEventListener('click',function(){
+    try{sessionStorage.removeItem('madani_session')}catch(_){}
+    try{localStorage.removeItem('madani_siswa')}catch(_){}
+  });
+
+  var tt;
+  function toast(t,k){var e=$('toast');e.textContent=t;e.className='toast show '+(k||'');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('show');},3800);}
+  /* tombol Upload Photo: sebelum siswa login/data termuat, hanya memberi tahu */
+  var upOpen=function(){toast('Silakan login sebagai siswa terlebih dahulu.','err');};
+  $('btnUpPhoto').addEventListener('click',function(){closeSheet();upOpen();});
+
+  /* ---------- Siswa yang login (disimpan index.html saat login Ruang Siswa) ---------- */
+  var sess=null;
+  try{sess=JSON.parse(sessionStorage.getItem('madani_session')||'null');}catch(_){}
+  function state(title,msg,btn){
+    $('idBody').innerHTML='<div class="state"><b>'+esc(title)+'</b>'+esc(msg)+(btn?'<br><a class="btn" href="index.html">'+esc(btn)+'</a>':'')+'</div>';
+  }
+  if(!sess||sess.role!=='siswa'||!sess.id){
+    state('Belum login sebagai siswa','Silakan masuk lewat Ruang Siswa untuk melihat identitasmu.','Ke halaman login');
+    return;
+  }
+  $('acctName').textContent=sess.nama||'Siswa';
+  $('acctRole').textContent=sess.kelas||'Siswa';
+  $('acctAv').textContent=initials(sess.nama);
+
+  /* ---------- Data dari Supabase (tabel siswa & profil) ---------- */
+  var db=window.db; /* klien dari config.js */
+
+  /* data yang ditampilkan di kontainer Identitas Siswa */
+  var FIELDS=[
+    ['nama','Nama'],['nipd','NIPD'],['nisn','NISN'],['jk','Jenis Kelamin'],
+    ['tanggal_lahir','Tanggal Lahir'],['tempat_lahir','Tempat Lahir'],['rombel','Kelas']
+  ];
+  var NOPHOTO='<div class="nophoto">'+svg('photo')+'Belum ada photo</div>';
+  var me=null;
+
+  /* ---------- Upload photo: kompres (maks 20 KB) -> bucket "aset" -> link disimpan di kolom photo (sama dengan siswa.html) ---------- */
+  var BUCKET='aset',FOLDER='siswa',MAX_BYTES=20000,picked=null,pickedUrl=null,upBusy=false,pickTok=0;
+  function photoPath(id){return FOLDER+'/siswa-'+id+'.jpg';}
+  function kb(n){return (n/1024).toFixed(n<10240?1:0)+' KB';}
+  function loadFileImg(file){
+    return new Promise(function(res,rej){
+      var u=URL.createObjectURL(file),im=new Image();
+      im.onload=function(){URL.revokeObjectURL(u);res(im);};
+      im.onerror=function(){URL.revokeObjectURL(u);rej(new Error('Format gambar tidak didukung. Gunakan JPG atau PNG.'));};
+      im.src=u;
+    });
+  }
+  function toBlob(cv,q){return new Promise(function(res){cv.toBlob(res,'image/jpeg',q);});}
+  async function compressImage(file,maxBytes){
+    var im=await loadFileImg(file),W=im.naturalWidth||im.width,H=im.naturalHeight||im.height;
+    if(!W||!H)throw new Error('Gambar tidak valid.');
+    var plans=[{sides:[640,512,420,360,300,256,200,160,128],min:.5},{sides:[128,96,72],min:.3}],lw=0,lh=0;
+    for(var pi=0;pi<plans.length;pi++){
+      var pl=plans[pi];
+      for(var si=0;si<pl.sides.length;si++){
+        var sc=Math.min(1,pl.sides[si]/Math.max(W,H)),w=Math.max(1,Math.round(W*sc)),h=Math.max(1,Math.round(H*sc));
+        if(w===lw&&h===lh)continue;
+        lw=w;lh=h;
+        var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+        var cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,w,h);cx.imageSmoothingQuality='high';cx.drawImage(im,0,0,w,h);
+        var b=await toBlob(cv,.92);
+        if(b&&b.size<=maxBytes)return b;
+        var lo=pl.min,hi=.92,bl=await toBlob(cv,lo);
+        if(!bl||bl.size>maxBytes)continue;
+        var best=bl;
+        for(var k=0;k<6;k++){var mid=(lo+hi)/2,bm=await toBlob(cv,mid);if(bm&&bm.size<=maxBytes){best=bm;lo=mid;}else hi=mid;}
+        return best;
+      }
+    }
+    throw new Error('Foto tidak bisa dikompres sampai '+(maxBytes/1000)+' KB.');
+  }
+  function clearPicked(){
+    if(pickedUrl){try{URL.revokeObjectURL(pickedUrl);}catch(_){}}
+    picked=null;pickedUrl=null;
+  }
+  function paintPreview(){
+    var pv=$('upPv');
+    if(pickedUrl){pv.innerHTML='<img alt="Pratinjau photo" src="'+esc(pickedUrl)+'">';}
+    else if(me&&me.photo){
+      pv.innerHTML='<img alt="Photo saat ini" src="'+esc(me.photo)+'">';
+      pv.querySelector('img').addEventListener('error',function(){pv.innerHTML=NOPHOTO;});
+    }else pv.innerHTML=NOPHOTO;
+    $('upFn').textContent=picked?(picked.name+' · '+kb(picked.size)+' → '+kb(picked.blob.size)+' (terkompres)'):(me&&me.photo?'Photo saat ini. Pilih file untuk menggantinya.':'Belum ada file dipilih');
+    $('upSave').disabled=!picked;
+    $('upPick').textContent=(me&&me.photo)||picked?'Ganti Photo':'Pilih Photo';
+  }
+  function openUpload(){
+    if(!me){toast('Data siswa belum termuat. Coba lagi sebentar.','err');return;}
+    pickTok++;clearPicked();$('upFile').value='';upBusy=false;paintPreview();
+    $('upBd').hidden=false;document.body.classList.add('lock');
+  }
+  function closeUpload(){
+    if($('upBd').hidden||upBusy)return;
+    $('upBd').hidden=true;document.body.classList.remove('lock');
+    clearPicked();$('upFile').value='';
+    btnMenu.focus({preventScroll:true});
+  }
+  /* tampilkan photo baru di kontainer Identitas Siswa dan avatar navbar */
+  function paintPhoto(url){
+    var pf=$('pf');
+    if(pf){
+      pf.innerHTML='<img alt="Photo '+esc(me.nama)+'" src="'+esc(url)+'">';
+      pf.querySelector('img').addEventListener('error',function(){pf.innerHTML=NOPHOTO;});
+    }
+    $('acctAv').innerHTML='<img alt="" src="'+esc(url)+'">';
+  }
+  upOpen=openUpload;
+  $('upPick').addEventListener('click',function(){if(!upBusy)$('upFile').click();});
+  $('upFile').addEventListener('change',function(){
+    var f=this.files&&this.files[0];
+    if(!f)return;
+    if(!/^image\//.test(f.type)){toast('File harus berupa gambar (JPG/PNG).','err');this.value='';return;}
+    /* kompres dulu (maks 20 KB), baru tampilkan pratinjau hasil kompresnya */
+    var tok=++pickTok;
+    clearPicked();
+    $('upPv').innerHTML='<div class="nophoto">Mengompres…</div>';
+    $('upFn').textContent='Mengompres '+f.name+'…';
+    $('upSave').disabled=true;upBusy=true;
+    compressImage(f,MAX_BYTES).then(function(blob){
+      if(tok!==pickTok)return;
+      picked={name:f.name,size:f.size,blob:blob};
+      pickedUrl=URL.createObjectURL(blob);
+    }).catch(function(e){
+      if(tok!==pickTok)return;
+      toast(e.message||String(e),'err');
+    }).then(function(){
+      if(tok!==pickTok)return;
+      upBusy=false;paintPreview();
+    });
+  });
+  $('upX').addEventListener('click',closeUpload);
+  $('upCancel').addEventListener('click',closeUpload);
+  $('upBd').addEventListener('mousedown',function(e){if(e.target===$('upBd'))closeUpload();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeUpload();});
+  $('upSave').addEventListener('click',async function(){
+    if(upBusy||!picked||!me)return;
+    upBusy=true;$('upSave').disabled=true;$('upCancel').disabled=true;$('upPick').disabled=true;$('upSave').textContent='Mengunggah…';
+    try{
+      var blob=picked.blob,path=photoPath(me.id);
+      var up=await db.storage.from(BUCKET).upload(path,blob,{contentType:'image/jpeg',upsert:true,cacheControl:'3600'});
+      if(up.error)throw up.error;
+      var url=db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl+'?v='+Date.now();
+      var u=await db.from('siswa').update({photo:url,updated_at:new Date().toISOString()}).eq('id',me.id);
+      if(u.error)throw u.error;
+      var sz=picked.size;
+      me.photo=url;paintPhoto(url);
+      upBusy=false;closeUpload();
+      toast('Photo tersimpan ('+kb(sz)+' → '+kb(blob.size)+').','ok');
+    }catch(e){
+      toast('Gagal mengunggah photo: '+(e.message||e),'err');
+    }
+    upBusy=false;$('upSave').textContent='Unggah';$('upCancel').disabled=false;$('upPick').disabled=false;$('upSave').disabled=!picked;
+  });
+  function fmtDate(s){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||'');return m?m[3]+'-'+m[2]+'-'+m[1]:(s||'');}
+  function val(r,k){
+    var v=r[k];
+    if(k==='tanggal_lahir')v=fmtDate(v);
+    if(k==='jk')v=v==='L'?'Laki-laki':v==='P'?'Perempuan':v;
+    return v;
+  }
+
+  (async function(){
+    try{
+      var r=await db.from('siswa').select('id,nama,nipd,nisn,jk,tanggal_lahir,tempat_lahir,rombel,photo').eq('id',sess.id).maybeSingle();
+      if(r.error)throw r.error;
+      var d=r.data;
+      if(!d){state('Data tidak ditemukan','Data siswa untuk akun ini tidak ada. Silakan login ulang atau hubungi guru.','Ke halaman login');return;}
+      $('acctName').textContent=d.nama||sess.nama||'Siswa';
+      $('acctRole').textContent=d.rombel||sess.kelas||'Siswa';
+      me=d;
+      var hasPhoto=!!(d.photo&&String(d.photo).trim());
+      if(hasPhoto)$('acctAv').innerHTML='<img alt="" src="'+esc(d.photo)+'">';
+      else $('acctAv').textContent=initials(d.nama);
+      $('idBody').innerHTML=
+        '<div class="idh"><div class="pf" id="pf">'+(hasPhoto?'<img alt="Photo '+esc(d.nama)+'" src="'+esc(d.photo)+'">':NOPHOTO)+'</div><div><h2>'+esc(d.nama||'-')+'</h2><div class="tags">'+
+          (d.rombel?'<span class="tag">'+esc(d.rombel)+'</span>':'')+(d.nisn?'<span class="tag g">NISN '+esc(d.nisn)+'</span>':'')+'</div></div></div>'+
+        '<dl class="dl">'+FIELDS.map(function(f){
+          var v=val(d,f[0]),empty=(v==null||v==='');
+          return '<div class="it"><dt>'+esc(f[1])+'</dt><dd'+(empty?' class="na"':'')+'>'+(empty?'-':esc(v))+'</dd></div>';
+        }).join('')+'</dl>';
+      /* jika link photo rusak/gagal dimuat, tampilkan keterangan belum ada photo */
+      var pimg=document.querySelector('#pf img');
+      if(pimg)pimg.addEventListener('error',function(){$('pf').innerHTML=NOPHOTO;if($('acctAv').querySelector('img'))$('acctAv').textContent=initials(d.nama);});
+    }catch(e){
+      state('Gagal memuat identitas',(e&&e.message)||String(e));
+    }
+  })();
+
+  (async function(){
+    try{
+      var r=await db.from('profil').select('nama_sekolah,logo_url').order('id',{ascending:true}).limit(1).maybeSingle();
+      if(r.data&&r.data.nama_sekolah)$('navTitle').textContent=r.data.nama_sekolah;
+      if(r.data&&r.data.logo_url){$('navLogo').src=r.data.logo_url;$('navLogoBox').hidden=false;}
+    }catch(_){}
+  })();
+})();
+</script>
+</body>
+</html>
